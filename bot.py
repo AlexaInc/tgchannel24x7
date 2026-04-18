@@ -35,9 +35,18 @@ call_py = None
 queue = []
 is_playing = False
 current_video_id = None
+played_history = []
 
 async def play_next():
-    global is_playing, current_video_id
+    global is_playing, current_video_id, played_history
+    
+    # Add finished song to history
+    if current_video_id:
+        if current_video_id not in played_history:
+            played_history.append(current_video_id)
+        if len(played_history) > 100:
+            played_history.pop(0)
+
     if len(queue) > 0:
         video = queue.pop(0)
         current_video_id = video['id']
@@ -70,16 +79,18 @@ async def play_next():
             await play_next()
     else:
         if current_video_id:
-            next_id = await yt_handler.get_related_video(current_video_id)
-            if next_id:
-                info = await yt_handler.extract_info(next_id)
-                if info:
-                    queue.append(info)
-                    await play_next()
-                    return
+            related_ids = await yt_handler.get_related_videos(current_video_id)
+            for next_id in related_ids:
+                if next_id not in played_history:
+                    info = await yt_handler.extract_info(next_id)
+                    if info:
+                        queue.append(info)
+                        await play_next()
+                        return
         
         is_playing = False
-        print("Queue finished.")
+        current_video_id = None
+        print("Queue finished and no recommendations found.")
 
 async def start_bot():
     global app, call_py

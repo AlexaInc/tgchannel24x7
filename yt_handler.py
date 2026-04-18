@@ -142,18 +142,44 @@ class YouTubeHandler:
         except Exception:
             return []
 
-    async def get_related_video(self, video_id: str):
-        """Fetches a related video using InnerTube."""
+    async def get_related_videos(self, video_id: str):
+        """Fetches a list of related video IDs using InnerTube."""
         loop = asyncio.get_event_loop()
         try:
             data = await loop.run_in_executor(None, lambda: self.it.next(video_id))
-            secondary = data['contents']['twoColumnWatchNextResults']['secondaryResults']['secondaryResults']['results']
+            
+            # Navigate to secondary results
+            secondary = None
+            try:
+                secondary = data['contents']['twoColumnWatchNextResults']['secondaryResults']['secondaryResults']['results']
+            except KeyError:
+                try:
+                     # Fallback structure
+                     secondary = data['contents']['twoColumnWatchNextResults']['secondaryResults']['results']
+                except KeyError:
+                    pass
+            
+            if not secondary:
+                return []
+
+            video_ids = []
             for item in secondary:
                 if 'compactVideoRenderer' in item:
-                    return item['compactVideoRenderer']['videoId']
-            return None
-        except Exception:
-            return None
+                    video_ids.append(item['compactVideoRenderer']['videoId'])
+                elif 'lockupViewModel' in item:
+                    vid = item['lockupViewModel'].get('contentId')
+                    if vid: video_ids.append(vid)
+                elif 'itemSectionRenderer' in item: # Sometimes wrapped
+                    for content in item['itemSectionRenderer'].get('contents', []):
+                        if 'compactVideoRenderer' in content:
+                            video_ids.append(content['compactVideoRenderer']['videoId'])
+                        elif 'lockupViewModel' in content:
+                            vid = content['lockupViewModel'].get('contentId')
+                            if vid: video_ids.append(vid)
+            return video_ids
+        except Exception as e:
+            print(f"Error fetching related videos: {e}")
+            return []
 
 # Singleton instance
 yt_handler = YouTubeHandler()
