@@ -33,7 +33,8 @@ RUN echo "Rebuild Version: 1.0.4" > /rebuild_tag.txt
 # Copy python requirements and install
 COPY --from=cloner /repo/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
-RUN pip install --no-cache-dir tgcrypto  # Explicitly force install at final layer
+RUN pip install --no-cache-dir tgcrypto
+RUN pip uninstall -y yt-dlp-youtube-oauth2 || true
 
 # Copy the rest of the backend code
 COPY --from=cloner /repo/ . 

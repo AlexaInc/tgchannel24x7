@@ -1,6 +1,7 @@
 import asyncio
 import yt_dlp
 import os
+import copy
 import innertube
 import httpx
 from dotenv import load_dotenv
@@ -13,20 +14,20 @@ class YouTubeHandler:
         
         # Base yt-dlp config
         self.base_opts = {
-            'format': 'best', # Be as broad as possible
+            'format': 'best',
             'quiet': True,
             'no_warnings': True,
             'noprogress': True,
             'extract_flat': False,
             'cachedir': False,
-            'youtube_include_dash_manifest': False,
+            'youtube_include_dash_manifest': True, # Enable for better format availability
             'allowed_extractors': ['youtube'],
             'force_ipv4': True,
             'geo_bypass': True,
             'cookiefile': 'cookies.txt',
             'proxy': self.proxy,
             'ignoreerrors': True,
-            'extractor_args': {'youtube': {'skip': ['oauth2']}} # Disable oauth2 to avoid conflicts with cookies
+            'extractor_args': {'youtube': {'skip': ['oauth2', 'webpage']}}
         }
         
         # InnerTube client
@@ -57,15 +58,9 @@ class YouTubeHandler:
         return None
 
     async def _try_yt_dlp(self, url, client=None):
-        opts = self.base_opts.copy()
+        opts = copy.deepcopy(self.base_opts)
         if client:
-            # Construct a NEW extractor_args to avoid shallow copy issues with self.base_opts
-            yt_opts = self.base_opts.get('extractor_args', {}).get('youtube', {}).copy()
-            yt_opts['player_client'] = [client]
-            opts['extractor_args'] = {'youtube': yt_opts}
-        else:
-            # Ensure even without a client, we don't accidentally share the dict
-            opts['extractor_args'] = {'youtube': self.base_opts.get('extractor_args', {}).get('youtube', {}).copy()}
+            opts['extractor_args']['youtube']['player_client'] = [client]
             
         loop = asyncio.get_event_loop()
         try:
