@@ -14,19 +14,21 @@ class YouTubeHandler:
         
         # Base yt-dlp config
         self.base_opts = {
-            'format': 'best',
+            'format': 'bestaudio/best', # Safer default
             'quiet': True,
             'no_warnings': True,
             'noprogress': True,
             'extract_flat': False,
             'cachedir': False,
-            'youtube_include_dash_manifest': True, # Enable for better format availability
+            'youtube_include_dash_manifest': True,
+            'youtube_include_hls_manifest': True,
             'allowed_extractors': ['youtube'],
             'force_ipv4': True,
             'geo_bypass': True,
             'cookiefile': 'cookies.txt',
             'proxy': self.proxy,
             'ignoreerrors': True,
+            'check_formats': False, # Add this to avoid some availability checks
             'extractor_args': {'youtube': {'skip': ['oauth2', 'webpage']}}
         }
         

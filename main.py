@@ -47,6 +47,31 @@ if os.getenv("COOKIES_TEXT"):
 else:
     print("[!] COOKIES_TEXT not found in environment.")
 
+# Check available formats for a test video
+def diag_formats():
+    print("--- YT-DLP FORMAT DIAGNOSTIC ---")
+    try:
+        import yt_dlp
+        test_id = "n61ULEU7CO0"
+        opts = {
+            'cookiefile': 'cookies.txt',
+            'proxy': os.getenv("PROXY_URL"),
+            'quiet': True,
+            'youtube_include_dash_manifest': True,
+            'youtube_include_hls_manifest': True,
+        }
+        with yt_dlp.YoutubeDL(opts) as ydl:
+            info = ydl.extract_info(test_id, download=False)
+            formats = info.get('formats', [])
+            print(f"[✓] Detected {len(formats)} formats for {test_id}")
+            # Print top 5 formats
+            for f in formats[-5:]:
+                print(f"    - ID: {f.get('format_id')}, Ext: {f.get('ext')}, Note: {f.get('format_note')}")
+    except Exception as e:
+        print(f"[!] Format diagnostic failed: {e}")
+
+diag_formats()
+
 # --- END DIAGNOSTICS ---
 
 load_dotenv()
