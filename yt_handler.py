@@ -19,7 +19,7 @@ class YouTubeHandler:
             'no_warnings': True,
             'noprogress': True,
             'extract_flat': False,
-            'cachedir': False,
+            'cachedir': '/app/yt-dlp-cache', # Point to our pre-baked persistent cache
             'youtube_include_dash_manifest': True,
             'youtube_include_hls_manifest': True,
             'allowed_extractors': ['youtube'],
