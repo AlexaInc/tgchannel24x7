@@ -6,6 +6,15 @@ from dotenv import load_dotenv
 import api
 import bot
 from yt_handler import yt_handler
+import dns.resolver
+
+# Force Cloudflare DNS for the entire process
+try:
+    dns.resolver.default_resolver = dns.resolver.Resolver(configure=False)
+    dns.resolver.default_resolver.nameservers = ['1.1.1.1', '1.0.0.1']
+    print("Cloudflare DNS (1.1.1.1) forced.")
+except Exception as e:
+    print(f"DNS override failed: {e}")
 
 load_dotenv()
 
