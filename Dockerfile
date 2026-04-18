@@ -41,8 +41,8 @@ COPY --from=cloner /repo/ .
 # Copy the built frontend
 COPY --from=frontend-builder /app/web/dist ./web/dist
 
-# Expose the port
-EXPOSE 7860
+# Final touches and permissions
+RUN chmod +x entrypoint.sh
 
-# Run the unified app
-CMD ["python", "main.py"]
+# Run the unified app via entrypoint
+CMD ["/bin/sh", "entrypoint.sh"]
