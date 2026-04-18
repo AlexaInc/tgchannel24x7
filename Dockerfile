@@ -1,7 +1,7 @@
-# Stage 1: Clone the repository (Bust cache for Deno support)
+# Stage 1: Clone the repository (Bust cache for Pre-baked Solvers)
 FROM alpine/git AS cloner
 WORKDIR /repo
-RUN git clone https://github.com/AlexaInc/tgchannel24x7.git . && git reset --hard origin/master # V1.0.8
+RUN git clone https://github.com/AlexaInc/tgchannel24x7.git . && git reset --hard origin/master # V1.0.9
 
 # Stage 2: Build the frontend (Node stage is already cached usually)
 FROM node:20-alpine AS frontend-builder
@@ -46,6 +46,9 @@ RUN pip uninstall -y yt-dlp-youtube-oauth2 || true
 
 # Ensure nodejs is mapped to 'node' so yt-dlp can find it for scrambling challenges
 RUN ln -s /usr/bin/nodejs /usr/bin/node || true
+
+# Pre-download yt-dlp remote components (signature solvers) to avoid runtime skips
+RUN yt-dlp --remote-components ejs:github --update-remote-components --quiet || true
 
 # Copy the rest of the backend code
 COPY --from=cloner /repo/ . 
