@@ -27,25 +27,8 @@ class YouTubeHandler:
             'proxy': self.proxy,
         }
         
-        # Write cookies from environment variable if provided
-        self._write_cookies_from_env()
-        
         # InnerTube client
         self.it = innertube.InnerTube("WEB")
-...
-    def _write_cookies_from_env(self):
-        cookies_text = os.getenv("COOKIES_TEXT")
-        if cookies_text:
-            try:
-                with open("cookies.txt", "w") as f:
-                    f.write(cookies_text)
-                print("[✓] cookies.txt created from COOKIES_TEXT environment variable.")
-            except Exception as e:
-                print(f"[!] Failed to write cookies.txt: {e}")
-        elif os.path.exists("cookies.txt"):
-             print("[✓] Using existing cookies.txt file.")
-        else:
-             print("[!] No cookies.txt or COOKIES_TEXT found. Extraction may fail.")
         
         self.invidious_instances = [
             "https://inv.tux.rs",
