@@ -29,9 +29,14 @@ class YouTubeHandler:
             'proxy': self.proxy,
             'ignoreerrors': True,
             'check_formats': False,
-            'extractor_args': {'youtube': {'skip': ['oauth2', 'webpage']}},
-            'js_runtimes': ['deno', 'node'],
-            'remote_components': 'ejs:github', # Allow downloading solvers to solve n-challenges
+            'extractor_args': {
+                'youtube': {
+                    'skip': ['oauth2', 'webpage'],
+                    'player_client': ['tv', 'ios', 'android', 'web']
+                }
+            },
+            'js_runtime': 'node',
+            'remote_components': 'ejs:github',
         }
         
         # InnerTube client
