@@ -13,7 +13,7 @@ class YouTubeHandler:
         
         # Base yt-dlp config
         self.base_opts = {
-            'format': 'bestaudio[ext=m4a]/bestaudio+bestvideo[height<=240][ext=mp4]/best',
+            'format': 'bestaudio/best',
             'quiet': True,
             'no_warnings': True,
             'noprogress': True,
