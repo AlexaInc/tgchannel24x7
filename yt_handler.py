@@ -9,6 +9,9 @@ load_dotenv()
 
 class YouTubeHandler:
     def __init__(self):
+        self.proxy = os.getenv("PROXY_URL")
+        
+        # Base yt-dlp config
         self.base_opts = {
             'format': 'bestaudio[ext=m4a]/bestaudio+bestvideo[height<=240][ext=mp4]/best',
             'quiet': True,
@@ -19,8 +22,13 @@ class YouTubeHandler:
             'youtube_include_dash_manifest': False,
             'allowed_extractors': ['youtube'],
             'cookiefile': 'cookies.txt' if os.path.exists('cookies.txt') else None,
+            'proxy': self.proxy, # Add proxy to yt-dlp
         }
+        
+        # InnerTube client - we'll wrap it to use the proxy if possible
+        # Some versions of innertube client allow passing a session/proxies
         self.it = innertube.InnerTube("WEB")
+        
         self.invidious_instances = [
             "https://inv.tux.rs",
             "https://invidious.protokolla.fi",
@@ -33,13 +41,11 @@ class YouTubeHandler:
         video_id = url_or_id[-11:] if len(url_or_id) > 11 else url_or_id
         url = f"https://www.youtube.com/watch?v={video_id}"
         
-        # 1. Try yt-dlp with different clients
-        # We prefer android or ios for video streams as they are more likely to have 240p easily
         for client in ['android', 'ios', 'tv', 'mweb']:
             res = await self._try_yt_dlp(url, client=client)
             if res: return res
         
-        # 2. Try Invidious API Fallback
+        print(f"yt-dlp failed, trying Invidious fallback with proxy support...")
         res = await self._try_invidious(video_id)
         if res: return res
 
@@ -66,13 +72,13 @@ class YouTubeHandler:
             return None
 
     async def _try_invidious(self, video_id):
-        async with httpx.AsyncClient(timeout=10.0) as client:
+        proxy_mounts = {"all://": self.proxy} if self.proxy else None
+        async with httpx.AsyncClient(timeout=10.0, proxies=proxy_mounts) as client:
             for instance in self.invidious_instances:
                 try:
                     resp = await client.get(f"{instance}/api/v1/videos/{video_id}")
                     if resp.status_code == 200:
                         data = resp.json()
-                        # For video, we try to find a combined format or use the url
                         return {
                             'title': data.get('title'),
                             'url': data.get('adaptiveFormats')[0].get('url') if data.get('adaptiveFormats') else None,
@@ -97,7 +103,6 @@ class YouTubeHandler:
                     for item in section['itemSectionRenderer']['contents']:
                         if 'videoRenderer' in item:
                             v = item['videoRenderer']
-                            # Extract duration properly
                             duration = 0
                             if 'lengthText' in v:
                                 parts = list(map(int, v['lengthText']['simpleText'].split(':')))
