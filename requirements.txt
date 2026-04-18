@@ -12,3 +12,4 @@ python-multipart==0.0.9
 innertube==2.1.19
 httpx==0.23.3
 pydantic==2.9.2
+tgcrypto==1.2.5

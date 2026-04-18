@@ -16,12 +16,15 @@ FROM python:3.11-slim
 WORKDIR /app
 
 # Optimize Apt-get: No-install-recommends and cleanup
-# Only install what is absolutely necessary
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ffmpeg \
     build-essential \
     git \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Add Cloudflare DNS (Best effort for user request)
+RUN echo "nameserver 1.1.1.1" > /etc/resolv.conf && \
+    echo "nameserver 1.0.0.1" >> /etc/resolv.conf
 
 # Copy python requirements and install
 COPY --from=cloner /repo/requirements.txt .

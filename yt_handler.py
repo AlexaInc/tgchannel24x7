@@ -21,8 +21,10 @@ class YouTubeHandler:
             'cachedir': False,
             'youtube_include_dash_manifest': False,
             'allowed_extractors': ['youtube'],
+            'force_ipv4': True,  # Help bypass some IPv6 bot detection
+            'geo_bypass': True,
             'cookiefile': 'cookies.txt' if os.path.exists('cookies.txt') else None,
-            'proxy': self.proxy, # Add proxy to yt-dlp
+            'proxy': self.proxy,
         }
         
         # InnerTube client - we'll wrap it to use the proxy if possible
@@ -33,7 +35,9 @@ class YouTubeHandler:
             "https://inv.tux.rs",
             "https://invidious.protokolla.fi",
             "https://invidious.lunar.icu",
-            "https://iv.ggtyler.dev"
+            "https://iv.ggtyler.dev",
+            "https://invidious.projectsegfau.lt",
+            "https://invidious.tiekoetter.com"
         ]
 
     async def extract_info(self, url_or_id: str):
