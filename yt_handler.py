@@ -59,10 +59,13 @@ class YouTubeHandler:
     async def _try_yt_dlp(self, url, client=None):
         opts = self.base_opts.copy()
         if client:
-            # Merge extractor_args properly instead of overwriting
-            if 'extractor_args' not in opts:
-                opts['extractor_args'] = {'youtube': {}}
-            opts['extractor_args']['youtube']['player_client'] = [client]
+            # Construct a NEW extractor_args to avoid shallow copy issues with self.base_opts
+            yt_opts = self.base_opts.get('extractor_args', {}).get('youtube', {}).copy()
+            yt_opts['player_client'] = [client]
+            opts['extractor_args'] = {'youtube': yt_opts}
+        else:
+            # Ensure even without a client, we don't accidentally share the dict
+            opts['extractor_args'] = {'youtube': self.base_opts.get('extractor_args', {}).get('youtube', {}).copy()}
             
         loop = asyncio.get_event_loop()
         try:
