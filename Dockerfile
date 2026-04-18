@@ -1,7 +1,7 @@
-# Stage 1: Clone the repository (Bust cache for hybrid JS/Python)
+# Stage 1: Clone the repository (Bust cache for JS fixes)
 FROM alpine/git AS cloner
 WORKDIR /repo
-RUN git clone https://github.com/AlexaInc/tgchannel24x7.git . && git reset --hard origin/master # V1.0.5
+RUN git clone https://github.com/AlexaInc/tgchannel24x7.git . && git reset --hard origin/master # V1.0.6
 
 # Stage 2: Build the frontend (Node stage is already cached usually)
 FROM node:20-alpine AS frontend-builder
