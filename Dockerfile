@@ -24,10 +24,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Add Cloudflare DNS (Best effort for user request)
-RUN echo "nameserver 1.1.1.1" > /etc/resolv.conf && \
-    echo "nameserver 1.0.0.1" >> /etc/resolv.conf
-
 # Force a rebuild of requirements
 RUN echo "Rebuild Date: 2026-04-18" > /rebuild_tag.txt
 
