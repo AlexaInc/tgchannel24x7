@@ -21,11 +21,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     python3-dev \
     libssl-dev \
+    gcc \
+    g++ \
     git \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Force a rebuild of requirements
-RUN echo "Rebuild Date: 2026-04-18" > /rebuild_tag.txt
+# Force a rebuild of requirements (Cache Buster)
+RUN echo "Rebuild Version: 1.0.4" > /rebuild_tag.txt
 
 # Copy python requirements and install
 COPY --from=cloner /repo/requirements.txt .

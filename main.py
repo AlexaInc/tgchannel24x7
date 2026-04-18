@@ -1,20 +1,47 @@
 import asyncio
 import uvicorn
 import os
+import sys
+import socket
 from dotenv import load_dotenv
 
 import api
 import bot
 from yt_handler import yt_handler
-import dns.resolver
+
+# --- DIAGNOSTICS & HARDENING ---
+VERSION = "1.0.4-DEBUG"
+print(f"--- BOT STARTUP (Version: {VERSION}) ---")
+print(f"Python: {sys.version}")
 
 # Force Cloudflare DNS for the entire process
 try:
+    import dns.resolver
     dns.resolver.default_resolver = dns.resolver.Resolver(configure=False)
     dns.resolver.default_resolver.nameservers = ['1.1.1.1', '1.0.0.1']
-    print("Cloudflare DNS (1.1.1.1) forced.")
+    print("[✓] Cloudflare DNS (1.1.1.1) forced.")
 except Exception as e:
-    print(f"DNS override failed: {e}")
+    print(f"[!] DNS override failed: {e}")
+
+# Check TGCrypto
+try:
+    import tgcrypto
+    print("[✓] TgCrypto detected and loaded successfully.")
+except ImportError:
+    print("[✗] TgCrypto still MISSING from python path.")
+
+# Check Proxy
+proxy = os.getenv("PROXY_URL")
+if proxy:
+    if not proxy.startswith(("http://", "https://", "socks")):
+        print(f"[!] PRXOY_URL does not start with protocol. Fixing...")
+        proxy = f"http://{proxy}"
+        os.environ["PROXY_URL"] = proxy
+    print(f"[✓] Proxy configured: {proxy[:15]}...")
+else:
+    print("[!] No PROXY_URL found in environment secrets.")
+
+# --- END DIAGNOSTICS ---
 
 load_dotenv()
 
