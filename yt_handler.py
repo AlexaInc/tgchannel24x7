@@ -14,29 +14,31 @@ class YouTubeHandler:
         
         # Base yt-dlp config
         self.base_opts = {
-            'format': 'bestaudio/best', # Safer default
+            'format': 'bestaudio[ext=m4a]/bestaudio/best', # Standard for tg bots
             'quiet': True,
             'no_warnings': True,
             'noprogress': True,
             'extract_flat': False,
-            'cachedir': '/app/yt-dlp-cache', # Point to our pre-baked persistent cache
+            'cachedir': '/app/yt-dlp-cache',
             'youtube_include_dash_manifest': True,
             'youtube_include_hls_manifest': True,
             'allowed_extractors': ['youtube'],
             'force_ipv4': True,
+            'source_address': '0.0.0.0', 
+            'nocheckcertificate': True, # Yukki standard
             'geo_bypass': True,
             'cookiefile': 'cookies.txt',
             'proxy': self.proxy,
             'ignoreerrors': True,
             'check_formats': False,
+            'user_agent': 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Mobile Safari/537.36', # Android User Agent
             'extractor_args': {
                 'youtube': {
                     'skip': ['oauth2', 'webpage'],
-                    'player_client': ['tv', 'ios', 'android', 'web']
+                    'player_client': ['android', 'ios', 'tv']
                 }
             },
             'js_runtime': 'node',
-            'remote_components': 'ejs:github',
         }
         
         # InnerTube client
