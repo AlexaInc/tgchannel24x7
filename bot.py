@@ -49,7 +49,7 @@ async def play_next():
                 CHANNEL_ID, 
                 MediaStream(
                     video['url'],
-                    audio_parameters=AudioQuality.STUDIO,
+                    audio_parameters=AudioQuality.LOW,
                     video_parameters=VideoQuality.SD_360p, # Lowest standard SD quality
                 )
             )
