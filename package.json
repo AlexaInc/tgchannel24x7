@@ -1,9 +1,0 @@
-{
-  "name": "tgchannel24x7-downloader",
-  "version": "1.0.0",
-  "description": "JS helper for YouTube extraction",
-  "main": "downloader.js",
-  "dependencies": {
-    "youtube-dl-exec": "^3.1.4"
-  }
-}
