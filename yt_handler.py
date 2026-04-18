@@ -43,7 +43,10 @@ class YouTubeHandler:
             "https://invidious.lunar.icu",
             "https://iv.ggtyler.dev",
             "https://invidious.projectsegfau.lt",
-            "https://invidious.tiekoetter.com"
+            "https://invidious.tiekoetter.com",
+            "https://inv.zzls.xyz",
+            "https://invidious.no-logs.com",
+            "https://invidious.io.lol"
         ]
 
     async def extract_info(self, url_or_id: str):
