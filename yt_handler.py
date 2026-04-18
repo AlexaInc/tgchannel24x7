@@ -60,23 +60,37 @@ class YouTubeHandler:
         return None
 
     async def _try_yt_dlp(self, url, client=None):
-        opts = copy.deepcopy(self.base_opts)
-        if client:
-            opts['extractor_args']['youtube']['player_client'] = [client]
-            
+        """Calls the JS-based downloader for more robust extraction."""
+        video_id = url[-11:] if len(url) > 11 else url
+        
         loop = asyncio.get_event_loop()
         try:
-            with yt_dlp.YoutubeDL(opts) as ydl:
-                info = await loop.run_in_executor(None, lambda: ydl.extract_info(url, download=False))
-                return {
-                    'title': info.get('title'),
-                    'url': info.get('url'),
-                    'webpage_url': info.get('webpage_url'),
-                    'id': info.get('id'),
-                    'duration': info.get('duration'),
-                    'thumbnail': info.get('thumbnail')
-                }
-        except Exception:
+            # Call node downloader.js <video_id>
+            # We pass the environment to ensure PROXY_URL is available
+            proc = await asyncio.create_subprocess_exec(
+                "node", "downloader.js", video_id,
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.PIPE,
+                env=os.environ
+            )
+            stdout, stderr = await proc.communicate()
+            
+            if proc.returncode != 0:
+                # print(f"JS Downloader failed: {stderr.decode()}")
+                return None
+            
+            import json
+            info = json.loads(stdout.decode())
+            return {
+                'title': info.get('title'),
+                'url': info.get('url'),
+                'webpage_url': info.get('webpage_url'),
+                'id': info.get('id'),
+                'duration': info.get('duration'),
+                'thumbnail': info.get('thumbnail')
+            }
+        except Exception as e:
+            # print(f"JS Bridge error: {e}")
             return None
 
     async def _try_invidious(self, video_id):

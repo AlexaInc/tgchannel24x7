@@ -26,6 +26,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     g++ \
     git \
     nodejs \
+    npm \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Force a rebuild of requirements (Cache Buster)
@@ -36,6 +37,10 @@ COPY --from=cloner /repo/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 RUN pip install --no-cache-dir tgcrypto
 RUN pip uninstall -y yt-dlp-youtube-oauth2 || true
+
+# Copy JS requirements and install
+COPY --from=cloner /repo/package.json .
+RUN npm install --omit=dev
 
 # Copy the rest of the backend code
 COPY --from=cloner /repo/ . 
