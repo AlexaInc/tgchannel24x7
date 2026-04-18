@@ -41,6 +41,12 @@ if proxy:
 else:
     print("[!] No PROXY_URL found in environment secrets.")
 
+# Check Cookies env
+if os.getenv("COOKIES_TEXT"):
+    print(f"[✓] COOKIES_TEXT detected (Length: {len(os.getenv('COOKIES_TEXT'))} chars).")
+else:
+    print("[!] COOKIES_TEXT not found in environment.")
+
 # --- END DIAGNOSTICS ---
 
 load_dotenv()

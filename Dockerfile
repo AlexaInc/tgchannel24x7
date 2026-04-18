@@ -21,6 +21,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     python3-dev \
     libssl-dev \
+    libffi-dev \
     gcc \
     g++ \
     git \
@@ -32,6 +33,7 @@ RUN echo "Rebuild Version: 1.0.4" > /rebuild_tag.txt
 # Copy python requirements and install
 COPY --from=cloner /repo/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir tgcrypto  # Explicitly force install at final layer
 
 # Copy the rest of the backend code
 COPY --from=cloner /repo/ . 
