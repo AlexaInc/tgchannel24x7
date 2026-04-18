@@ -13,7 +13,7 @@ class YouTubeHandler:
         
         # Base yt-dlp config
         self.base_opts = {
-            'format': 'bestaudio/best',
+            'format': 'best', # Be as broad as possible
             'quiet': True,
             'no_warnings': True,
             'noprogress': True,
@@ -25,6 +25,8 @@ class YouTubeHandler:
             'geo_bypass': True,
             'cookiefile': 'cookies.txt',
             'proxy': self.proxy,
+            'ignoreerrors': True,
+            'extractor_args': {'youtube': {'skip': ['oauth2']}} # Disable oauth2 to avoid conflicts with cookies
         }
         
         # InnerTube client
