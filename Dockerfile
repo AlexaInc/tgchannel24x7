@@ -1,7 +1,7 @@
-# Stage 1: Clone the repository (Bust cache for JS fixes)
+# Stage 1: Clone the repository (Bust cache for Deno support)
 FROM alpine/git AS cloner
 WORKDIR /repo
-RUN git clone https://github.com/AlexaInc/tgchannel24x7.git . && git reset --hard origin/master # V1.0.6
+RUN git clone https://github.com/AlexaInc/tgchannel24x7.git . && git reset --hard origin/master # V1.0.8
 
 # Stage 2: Build the frontend (Node stage is already cached usually)
 FROM node:20-alpine AS frontend-builder
@@ -26,11 +26,17 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     g++ \
     git \
     nodejs \
-    npm \
+    unzip \
+    curl \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
+# Install Deno (yt-dlp's preferred JS runtime)
+RUN curl -fsSL https://deno.land/x/install/install.sh | sh
+ENV DENO_INSTALL="/root/.deno"
+ENV PATH="$DENO_INSTALL/bin:$PATH"
+
 # Force a rebuild of requirements (Cache Buster)
-RUN echo "Rebuild Version: 1.0.4" > /rebuild_tag.txt
+RUN echo "Rebuild Version: 1.0.5" > /rebuild_tag.txt
 
 # Copy python requirements and install
 COPY --from=cloner /repo/requirements.txt .
@@ -38,9 +44,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 RUN pip install --no-cache-dir tgcrypto
 RUN pip uninstall -y yt-dlp-youtube-oauth2 || true
 
-# Copy JS requirements and install
-COPY --from=cloner /repo/package.json .
-RUN npm install --omit=dev
+# Ensure nodejs is mapped to 'node' so yt-dlp can find it for scrambling challenges
+RUN ln -s /usr/bin/nodejs /usr/bin/node || true
 
 # Copy the rest of the backend code
 COPY --from=cloner /repo/ . 
