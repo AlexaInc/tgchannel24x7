@@ -1,0 +1,12 @@
+py-tgcalls
+hydrogram
+yt-dlp
+fastapi[all]
+uvicorn
+python-dotenv
+sqlalchemy
+motor
+yt-dlp-youtube-oauth2
+pyjwt
+python-multipart
+innertube
