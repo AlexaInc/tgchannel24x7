@@ -14,7 +14,7 @@ class YouTubeHandler:
         
         # Base yt-dlp config
         self.base_opts = {
-            'format': 'bestaudio[ext=m4a]/bestaudio/best', # Standard for tg bots
+            'format': 'worst[ext=mp4]/worst/bestvideo[height<=144]+bestaudio/best[height<=144]',
             'quiet': True,
             'no_warnings': True,
             'noprogress': True,
