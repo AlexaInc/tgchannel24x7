@@ -72,6 +72,8 @@ class FFMPEGStreamer:
             "-c:a", "aac",
             "-b:a", "128k",
             "-ar", "44100",
+            "-map", "0:v",
+            "-map", "1:a",
             "-f", "flv",
             "-flvflags", "no_duration_filesize",
             rtmps_url
