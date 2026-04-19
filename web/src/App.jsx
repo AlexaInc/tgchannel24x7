@@ -103,8 +103,8 @@ function App() {
 
   if (!token) {
     return (
-      <div className="flex-center" style={{ height: '100vh' }}>
-        <div className="glass-card animate-fade" style={{ padding: '3rem', width: '100%', maxWidth: '400px' }}>
+      <div className="flex-center" style={{ minHeight: '100vh', padding: '1rem' }}>
+        <div className="glass-card animate-fade card-padding" style={{ width: '100%', maxWidth: '400px' }}>
           <div className="flex-center" style={{ marginBottom: '2rem', gap: '1rem' }}>
             <Music size={40} color="#4f46e5" />
             <h1 style={{ fontSize: '2rem' }}>Echoflow</h1>
@@ -140,7 +140,7 @@ function App() {
   return (
     <div className="container animate-fade">
       {/* Header */}
-      <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '3rem' }}>
+      <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
           <div style={{
             background: 'var(--primary)',
@@ -156,15 +156,15 @@ function App() {
           </div>
         </div>
         <button onClick={handleLogout} style={{ background: 'var(--glass)', color: 'white', padding: '10px 20px', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <LogOut size={18} /> Logout
+          <LogOut size={18} /> <span className="hide-mobile">Logout</span>
         </button>
       </header>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 350px', gap: '2rem' }}>
+      <div className="main-grid">
         {/* Main Content */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
           {/* Now Playing Card */}
-          <div className="glass-card" style={{ padding: '2rem', position: 'relative', overflow: 'hidden' }}>
+          <div className="glass-card card-padding" style={{ position: 'relative', overflow: 'hidden' }}>
             <div style={{
               position: 'absolute',
               top: '-50px',
@@ -217,9 +217,9 @@ function App() {
           </div>
 
           {/* Search Section */}
-          <div className="glass-card" style={{ padding: '2rem' }}>
-            <form onSubmit={handleSearch} style={{ display: 'flex', gap: '1rem', marginBottom: '2rem' }}>
-              <div style={{ position: 'relative', flex: 1 }}>
+          <div className="glass-card card-padding">
+            <form onSubmit={handleSearch} className="search-bar">
+              <div className="search-input-wrapper">
                 <Search size={20} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
                 <input
                   type="text"
@@ -229,23 +229,16 @@ function App() {
                   style={{ width: '100%', paddingLeft: '40px' }}
                 />
               </div>
-              <button style={{ background: 'var(--primary)', color: 'white', padding: '0 24px' }}>
+              <button style={{ background: 'var(--primary)', color: 'white', padding: '12px 24px' }}>
                 {loading ? <Loader2 className="animate-spin" /> : 'Search'}
               </button>
             </form>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               {searchResults.map(video => (
-                <div key={video.id} className="flex-center" style={{
-                  justifyContent: 'space-between',
-                  padding: '12px',
-                  background: 'var(--glass)',
-                  borderRadius: '16px',
-                  border: '1px solid transparent',
-                  transition: '0.2s'
-                }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flex: 1, minWidth: 0 }}>
-                    <img src={video.thumbnail} alt="" style={{ width: '100px', height: '56px', objectFit: 'cover', borderRadius: '8px' }} />
+                <div key={video.id} className="song-item">
+                  <div className="song-info">
+                    <img src={video.thumbnail} alt="" className="song-thumbnail" />
                     <div style={{ minWidth: 0, flex: 1 }}>
                       <p style={{ fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{video.title}</p>
                       <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
@@ -253,20 +246,20 @@ function App() {
                       </p>
                     </div>
                   </div>
-                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                  <div className="song-actions">
                     <button
                       onClick={() => playSong(video.id, false)}
                       className="flex-center"
                       title="Add to Queue"
                       style={{ background: 'var(--glass)', color: 'white', padding: '8px 12px', fontSize: '0.8rem', gap: '0.4rem' }}>
-                      <ListMusic size={16} /> + Queue
+                      <ListMusic size={16} /> <span className="hide-mobile">+ Queue</span>
                     </button>
                     <button
                       onClick={() => playSong(video.id, true)}
                       className="flex-center"
                       title="Play Now"
                       style={{ background: 'white', color: 'black', padding: '8px 12px', fontSize: '0.8rem', gap: '0.4rem', fontWeight: 'bold' }}>
-                      <Play size={16} fill="black" /> Play Now
+                      <Play size={16} fill="black" /> <span className="hide-mobile">Play Now</span>
                     </button>
                   </div>
                 </div>
@@ -281,8 +274,8 @@ function App() {
         </div>
 
         {/* Sidebar / Queue */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-          <div className="glass-card" style={{ padding: '2rem', height: 'fit-content' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+          <div className="glass-card card-padding" style={{ height: 'fit-content' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.5rem' }}>
               <ListMusic size={20} color="var(--primary)" />
               <h3 style={{ fontSize: '1.2rem' }}>Up Next</h3>
