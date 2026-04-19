@@ -66,8 +66,15 @@ input:focus {
 
 /* Animations */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .animate-fade {
@@ -78,13 +85,133 @@ input:focus {
 .container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .container {
+    padding: 2rem;
+  }
 }
 
 .flex-center {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.main-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 1024px) {
+  .main-grid {
+    grid-template-columns: 1fr 350px;
+    gap: 2rem;
+  }
+}
+
+.card-padding {
+  padding: 1.5rem;
+}
+
+@media (min-width: 640px) {
+  .card-padding {
+    padding: 2rem;
+  }
+}
+
+.search-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+@media (min-width: 640px) {
+  .search-bar {
+    flex-direction: row;
+  }
+}
+
+.search-input-wrapper {
+  position: relative;
+  flex: 1;
+}
+
+.song-item {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem;
+  background: var(--glass);
+  border-radius: 16px;
+  transition: 0.2s;
+}
+
+@media (min-width: 640px) {
+  .song-item {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px;
+  }
+}
+
+.song-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.song-thumbnail {
+  width: 80px;
+  height: 45px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+@media (min-width: 640px) {
+  .song-thumbnail {
+    width: 100px;
+    height: 56px;
+  }
+}
+
+.song-actions {
+  display: flex;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+@media (min-width: 640px) {
+  .song-actions {
+    width: auto;
+  }
+}
+
+.song-actions button {
+  flex: 1;
+}
+
+@media (min-width: 640px) {
+  .song-actions button {
+    flex: none;
+  }
+}
+
+.hide-mobile {
+  display: none;
+}
+
+@media (min-width: 640px) {
+  .hide-mobile {
+    display: inline;
+  }
 }
 
 /* Scrollbar */
