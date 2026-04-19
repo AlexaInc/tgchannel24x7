@@ -59,15 +59,18 @@ class FFMPEGStreamer:
             "-i", BACKGROUND_IMAGE_PATH,
             "-i", audio_url,
             "-vf", "scale=640:360:force_original_aspect_ratio=decrease,pad=640:360:(ow-iw)/2:(oh-ih)/2",
+            "-r", "30",
             "-c:v", "libx264",
             "-preset", "veryfast",
-            "-b:v", "800k",
-            "-maxrate", "800k",
-            "-bufsize", "1600k",
+            "-tune", "zerolatency",
+            "-profile:v", "main",
+            "-b:v", "1000k",
+            "-maxrate", "1000k",
+            "-bufsize", "2000k",
             "-pix_fmt", "yuv420p",
-            "-g", "30",
+            "-g", "60",
             "-c:a", "aac",
-            "-b:a", "96k",
+            "-b:a", "128k",
             "-ar", "44100",
             "-f", "flv",
             "-flvflags", "no_duration_filesize",
@@ -113,10 +116,6 @@ class FFMPEGStreamer:
 streamer = FFMPEGStreamer()
 
 async def get_rtmp_credentials():
-    global cached_rtmps_url
-    if cached_rtmps_url:
-        return cached_rtmps_url
-        
     try:
         peer = await app.resolve_peer(CHANNEL_ID)
         
