@@ -7,3 +7,5 @@ cookies.txt
 .venv
 .gemini
 *.log
+*.session
+*.session-journal
