@@ -55,19 +55,21 @@ class FFMPEGStreamer:
             "ffmpeg",
             "-loglevel", "warning",
             "-reconnect", "1",
+            "-reconnect_at_eof", "1",
             "-reconnect_streamed", "1",
-            "-reconnect_delay_max", "2",
+            "-reconnect_delay_max", "5",
             "-re",
             "-i", audio_url,
+            "-vf", "scale=-2:50",
             "-c:v", "libx264",
             "-preset", "ultrafast",
             "-tune", "zerolatency",
             "-profile:v", "baseline",
-            "-b:v", "300k",
-            "-maxrate", "300k",
-            "-bufsize", "600k",
+            "-b:v", "100k",
+            "-maxrate", "100k",
+            "-bufsize", "200k",
             "-pix_fmt", "yuv420p",
-            "-g", "30",
+            "-g", "15",
             "-c:a", "aac",
             "-b:a", "128k",
             "-ar", "44100",
@@ -178,8 +180,8 @@ async def play_next():
                     CHANNEL_ID, 
                     MediaStream(
                         video['url'],
-                        audio_parameters=AudioQuality.LOW,
-                        video_parameters=VideoQuality.SD_360p, # Lowest standard SD quality
+                        audio_parameters=AudioQuality.MEDIUM,
+                        video_parameters=VideoQuality.SD_360p, 
                     )
                 )
                 
